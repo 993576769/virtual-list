@@ -4,10 +4,10 @@
   "description": "Virtual list for Vue 3",
   "author": "a993576769",
   "license": "MIT",
-  "homepage": "https://github.com/a993576769/virtual-list",
+  "homepage": "https://github.com/993576769/virtual-list",
   "repository": {
     "type": "git",
-    "url": "https://github.com/a993576769/virtual-list.git"
+    "url": "https://github.com/993576769/virtual-list"
   },
   "keywords": [
     "vue",
