@@ -1,8 +1,17 @@
 # Virtual Scroll Component Documentation
 
-## Overview
+[![Build](https://github.com/993576769/virtual-list/actions/workflows/build.yml/badge.svg)](https://github.com/993576769/virtual-list/actions/workflows/build.yml)
+[![Publish](https://github.com/993576769/virtual-list/actions/workflows/publish.yml/badge.svg)](https://github.com/993576769/virtual-list/actions/workflows/publish.yml)
 
-This documentation covers two main components: the Virtual Scroll List (`VirtualScroll`) and the Virtual Scroll Item (`VirtualScrollItem`). Together, these components provide an efficient solution for rendering large lists in Vue 3 applications, using virtual scrolling techniques to improve performance and reduce memory usage.
+## Demo
+
+[https://993576769.github.io/virtual-list/](https://993576769.github.io/virtual-list/)
+
+## Installation
+
+```bash
+npm install @a993576769/virtual-list
+```
 
 ## Virtual Scroll List Component
 
