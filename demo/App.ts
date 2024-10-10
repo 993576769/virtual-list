@@ -20,7 +20,12 @@ export default defineComponent({
             h('li', [h(RouterLink, {
               to: '/demo-1',
             }, {
-              default: () => 'Virtual List',
+              default: () => 'Virtual List(fixed height)',
+            })]),
+            h('li', [h(RouterLink, {
+              to: '/demo-2',
+            }, {
+              default: () => 'Virtual List(variable height)',
             })]),
           ]),
         ]),

@@ -6,21 +6,13 @@ import dts from 'vite-plugin-dts';
 export default defineConfig(() => {
   return {
     base: '/virtual-list',
-    root: resolve(__dirname, 'src'),
+    root: resolve(__dirname, 'demo'),
     plugins: [
       vue(),
-      dts({
-        insertTypesEntry: true,
-        exclude: resolve(__dirname, 'src/demo'),
-      }),
+      dts({ insertTypesEntry: true }),
     ],
     build: {
       outDir: resolve(__dirname, 'dist'),
-    },
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, 'src'),
-      },
     },
   };
 });

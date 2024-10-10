@@ -1,6 +1,6 @@
 <script lang="ts" setup generic="T">
 import type { PropType } from 'vue';
-import { onMounted, onUnmounted, ref, watch } from 'vue';
+import { inject, onMounted, onUnmounted, ref, watch } from 'vue';
 
 const props = defineProps({
   item: {
@@ -12,10 +12,12 @@ const props = defineProps({
     required: true,
   },
   resize: {
-    type: Function as PropType<(height: number) => void>,
+    type: Function as PropType<(height?: number) => void>,
     required: true,
   },
 });
+
+const fixedHeight = inject<boolean>('fixedHeight', true);
 
 const itemRef = ref<HTMLElement | null>(null);
 
@@ -26,9 +28,17 @@ function updateHeight() {
 }
 
 // Watch for changes in the item's properties
-watch(() => props.item, updateHeight, { deep: true });
+watch(() => props.item, () => {
+  if (!fixedHeight) {
+    updateHeight();
+  }
+}, { deep: true });
 
 onMounted(() => {
+  if (fixedHeight) {
+    props.resize();
+    return;
+  }
   if (itemRef.value) {
     // Initial height update
     updateHeight();
@@ -37,7 +47,6 @@ onMounted(() => {
     const resizeObserver = new ResizeObserver(updateHeight);
     resizeObserver.observe(itemRef.value);
 
-    // TODO：之后再看看是否需要
     // Use MutationObserver to detect content changes
     // const mutationObserver = new MutationObserver(updateHeight);
     // mutationObserver.observe(itemRef.value, {

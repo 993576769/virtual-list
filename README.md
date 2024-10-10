@@ -20,7 +20,7 @@ npm install @a993576769/virtual-list
 | Prop Name | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `items` | `Array<T>` | Required | Array of items to be rendered |
-| `estimatedItemHeight` | `Number` | 48 | Estimated height of each item |
+| `itemHeight` | `Number` | 48 | Height of each item, if `fixedHeight` is true, this value will be ignored |
 | `buffer` | `Number` | 0 | Number of items to render outside the visible area |
 | `keyField` | `keyof T` | 'id' | Unique key field for each item |
 | `topThreshold` | `Number` | 50 | Threshold for triggering the `topArrived` event |

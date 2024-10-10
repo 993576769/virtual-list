@@ -8,10 +8,7 @@ export default defineConfig(() => {
     root: resolve(__dirname, 'src'),
     plugins: [
       vue(),
-      dts({
-        insertTypesEntry: true,
-        exclude: resolve(__dirname, 'src/demo'),
-      }),
+      dts({ insertTypesEntry: true }),
     ],
     build: {
       minify: true,
@@ -30,11 +27,6 @@ export default defineConfig(() => {
             vue: 'Vue',
           },
         },
-      },
-    },
-    resolve: {
-      alias: {
-        '@': resolve(__dirname, 'src'),
       },
     },
   };

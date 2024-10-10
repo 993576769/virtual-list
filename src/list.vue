@@ -2,7 +2,7 @@
 import type { PropType, Ref } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import { clone, sortedIndexBy } from 'lodash-es';
-import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, provide, ref, watch } from 'vue';
 
 export interface VirtualScrollEmits {
   (e: 'topArrived'): void;
@@ -32,8 +32,8 @@ const props = defineProps({
     type: Array as PropType<T[]>,
     required: true,
   },
-  /** 估计的item高度 */
-  estimatedItemHeight: {
+  /** item高度, 如果fixedHeight为true，则忽略此值 */
+  itemHeight: {
     type: Number,
     default: 48,
   },
@@ -62,9 +62,16 @@ const props = defineProps({
     type: [String, Number] as PropType<'top' | 'bottom' | T[keyof T]>,
     default: 'bottom',
   },
+  /** 是否固定高度 */
+  fixedHeight: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits<VirtualScrollEmits>();
+
+provide('fixedHeight', props.fixedHeight);
 
 const containerRef = ref<HTMLDivElement>();
 const containerHeight = ref(0);
@@ -85,23 +92,26 @@ const renderItems = computed<RenderedItem<T>[]>(() => {
     index: renderStartIndex.value + index,
     data: item,
     offset: itemPositions.value[renderStartIndex.value + index]?.top || 0,
-    height: itemHeights.value[renderStartIndex.value + index] || props.estimatedItemHeight,
+    height: itemHeights.value[renderStartIndex.value + index] || props.itemHeight,
   }));
 });
 
 // 可视区域内的所有item
 const visibleItems = computed<RenderedItem<T>[]>(() => {
+  const scrollTop = containerRef.value?.scrollTop ?? 0;
+  const clientHeight = containerRef.value?.clientHeight ?? 0;
   return renderItems.value.filter((item) => {
-    const scrollTop = containerRef.value?.scrollTop ?? 0;
-    const clientHeight = containerRef.value?.clientHeight ?? 0;
-    return item.offset + item.height >= scrollTop && item.offset <= scrollTop + clientHeight;
+    return (
+      (item.offset < scrollTop + clientHeight && item.offset + item.height > scrollTop)
+      || (item.offset <= scrollTop && item.offset + item.height >= scrollTop + clientHeight)
+    );
   });
 });
 
 function updateItemPositions() {
   let top = 0;
   itemPositions.value = props.items.map((_, index) => {
-    const height = itemHeights.value[index] || props.estimatedItemHeight;
+    const height = itemHeights.value[index] || props.itemHeight;
     const position = { top, bottom: top + height };
     top += height;
     return position;
@@ -120,7 +130,7 @@ function calculateVisibleRange(calculateFirstVisibleItem: boolean = true) {
   }
 
   // 起始索引
-  const startIndex = sortedIndexBy(itemPositions.value, { top: scrollTop, bottom: scrollTop + clientHeight }, item => item.top);
+  const startIndex = sortedIndexBy(itemPositions.value, { top: scrollTop, bottom: scrollTop }, item => item.bottom);
   // 结束索引
   const endIndex = sortedIndexBy(itemPositions.value, { top: scrollTop + clientHeight, bottom: scrollTop + clientHeight }, item => item.top);
 
@@ -222,10 +232,10 @@ async function scrollToItem(options: { key: T[keyof T]; alignment: 'start' | 'ce
 
   let totalHeight = 0;
   for (let i = 0; i < index; i++) {
-    totalHeight += itemHeights.value[i] || props.estimatedItemHeight;
+    totalHeight += itemHeights.value[i] || props.itemHeight;
   }
 
-  const itemHeight = itemHeights.value[index] || props.estimatedItemHeight;
+  const itemHeight = itemHeights.value[index] || props.itemHeight;
   const containerHeight = containerRef.value?.clientHeight || 0;
 
   let scrollTop;
@@ -276,13 +286,13 @@ async function initializeList() {
     // 首次初始化
     if (props.initialPosition === 'bottom') {
       renderEndIndex.value = newItemsLength - 1;
-      renderStartIndex.value = Math.max(0, renderEndIndex.value - Math.ceil(containerHeight.value / props.estimatedItemHeight) - props.buffer);
+      renderStartIndex.value = Math.max(0, renderEndIndex.value - Math.ceil(containerHeight.value / props.itemHeight) - props.buffer);
       await nextTick();
       updateItemPositions();
       scrollToPosition({ top: containerRef.value?.scrollHeight || 0 });
     } else if (props.initialPosition === 'top') {
       renderStartIndex.value = 0;
-      renderEndIndex.value = Math.min(newItemsLength - 1, Math.ceil(containerHeight.value / props.estimatedItemHeight) + props.buffer);
+      renderEndIndex.value = Math.min(newItemsLength - 1, Math.ceil(containerHeight.value / props.itemHeight) + props.buffer);
       await nextTick();
       updateItemPositions();
       scrollToPosition({ top: 0 });
@@ -329,7 +339,7 @@ async function initializeList() {
 }
 
 async function updateContainerHeight() {
-  if (containerRef.value) {
+  if (containerRef.value && !props.fixedHeight) {
     containerHeight.value = containerRef.value.clientHeight;
     await nextTick();
     renderItems.value.forEach((item) => {
@@ -344,6 +354,9 @@ async function updateContainerHeight() {
 }
 
 function waitForItemsToRender(): Promise<void> {
+  if (props.fixedHeight) {
+    return Promise.resolve();
+  }
   return new Promise((resolve) => {
     const checkRendered = () => {
       const allItemsRendered = renderItems.value.every((item) => {
@@ -415,7 +428,8 @@ defineExpose<VirtualScrollInstance<T>>({
         <slot
           :item="item.data"
           :index="item.index"
-          :resize="(height: number) => onItemResize(item.index, height)"
+          :resize="(height?: number) => onItemResize(item.index, height || props.itemHeight)"
+          :fixed-height="props.fixedHeight"
         ></slot>
       </div>
     </div>
