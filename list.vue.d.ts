@@ -28,7 +28,8 @@ export interface VirtualScrollInstance<T> {
 }
 declare const _default: <T>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_expose?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: __VLS_PrettifyLocal<Pick<Partial<{
-        estimatedItemHeight: number;
+        fixedHeight: boolean;
+        itemHeight: number;
         buffer: number;
         keyField: [{
             type: PropType<keyof T>;
@@ -47,8 +48,9 @@ declare const _default: <T>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>
             default: string;
         };
     }> & Omit<{
+        readonly fixedHeight: boolean;
         readonly items: T[];
-        readonly estimatedItemHeight: number;
+        readonly itemHeight: number;
         readonly buffer: number;
         readonly keyField: [{
             type: PropType<keyof T>;
@@ -69,14 +71,15 @@ declare const _default: <T>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>
         readonly onScroll?: (() => any) | undefined;
         readonly onTopArrived?: (() => any) | undefined;
         readonly onBottomArrived?: (() => any) | undefined;
-    } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps, "estimatedItemHeight" | "buffer" | "keyField" | "topThreshold" | "bottomThreshold" | "initialPosition">, "onScroll" | "items" | "onTopArrived" | "onBottomArrived" | ("estimatedItemHeight" | "buffer" | "keyField" | "topThreshold" | "bottomThreshold" | "initialPosition")> & {}> & import('vue').PublicProps;
+    } & import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps, "fixedHeight" | "itemHeight" | "buffer" | "keyField" | "topThreshold" | "bottomThreshold" | "initialPosition">, "onScroll" | "items" | "onTopArrived" | "onBottomArrived" | ("fixedHeight" | "itemHeight" | "buffer" | "keyField" | "topThreshold" | "bottomThreshold" | "initialPosition")> & {}> & import('vue').PublicProps;
     expose(exposed: import('vue').ShallowUnwrapRef<VirtualScrollInstance<T>>): void;
     attrs: any;
     slots: {
         default?(_: {
             item: T;
             index: number;
-            resize: (height: number) => void;
+            resize: (height?: number) => void;
+            fixedHeight: boolean;
         }): any;
     };
     emit: VirtualScrollEmits;
