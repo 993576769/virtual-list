@@ -1,7 +1,7 @@
 {
   "name": "@a993576769/virtual-list",
   "type": "module",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Virtual list for Vue 3",
   "author": "a993576769",
   "license": "MIT",
