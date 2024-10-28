@@ -1,4 +1,4 @@
-# Virtual Scroll Component Documentation
+# Virtual List Component Documentation
 
 [![Build](https://github.com/993576769/virtual-list/actions/workflows/build.yml/badge.svg)](https://github.com/993576769/virtual-list/actions/workflows/build.yml)
 [![Publish](https://github.com/993576769/virtual-list/actions/workflows/publish.yml/badge.svg)](https://github.com/993576769/virtual-list/actions/workflows/publish.yml)
@@ -13,7 +13,7 @@
 npm install @a993576769/virtual-list
 ```
 
-## Virtual Scroll List Component
+## Virtual List Component
 
 ### Props
 
@@ -46,7 +46,7 @@ npm install @a993576769/virtual-list
 | `scrollToBottom` | `(smooth?: boolean) => Promise<void>` | Scrolls to the bottom of the list |
 | `getScroll` | `() => { scrollHeight: number; scrollTop: number; clientHeight: number }` | Returns current scroll information |
 
-## Virtual Scroll Item Component
+## Virtual List Item Component
 
 ### Props
 
@@ -58,24 +58,24 @@ npm install @a993576769/virtual-list
 
 ## Usage
 
-To use the Virtual Scroll components together:
+To use the Virtual List components together:
 
 ```vue
 <script setup lang="ts">
-import { VirtualScroll, VirtualScrollItem } from '@a993576769/virtual-list';
+import { VirtualList, VirtualListItem } from '@a993576769/virtual-list';
 import { ref } from 'vue';
 
 const myItems = ref([/* your items array */]);
 </script>
 
 <template>
-  <VirtualScroll :items="myItems">
+  <VirtualList :items="myItems">
     <template #default="{ item, index, resize }">
-      <VirtualScrollItem :item="item" :index="index" :resize="resize">
+      <VirtualListItem :item="item" :index="index" :resize="resize">
         <!-- Your item content here -->
-      </VirtualScrollItem>
+      </VirtualListItem>
     </template>
-  </VirtualScroll>
+  </VirtualList>
 </template>
 ```
 
